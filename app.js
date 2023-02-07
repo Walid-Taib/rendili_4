@@ -29,7 +29,6 @@ connect.then((db) => {
 
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 const companies = require('./routes/companies');
 
 var app = express();
@@ -58,7 +57,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/search', search)
 
 function auth (req, res, next) {
