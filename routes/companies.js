@@ -2,10 +2,11 @@ const express=require('express');
 const companies=express.Router();
 const bodyParser=require('body-parser');
 companies.use(bodyParser.json());
+var authenticate = require('../authenticate');
 
 const Company=require('../models/company');
 companies.route('/')
-.get((req,res,next)=>{
+.get(authenticate.verifyUser, (req,res,next)=>{
   Company.find()
   .then((companies)=>{
     res.statusCode=200;

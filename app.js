@@ -72,7 +72,7 @@ function auth (req, res, next) {
         next();
   }
 }
-app.use(auth);
+
 app.use('/company',companies)
 
 app.use(express.static(path.join(__dirname, 'public')));
