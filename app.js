@@ -10,8 +10,8 @@ var authenticate = require('./authenticate');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var config = require('./config');
-
-
+var search=require('./routes/searchRouter')
+var cors=require('cors')
 /*************************connection to the database  */
 
 const mongoose = require('mongoose');
@@ -40,7 +40,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
+app.options('*', cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -59,6 +59,7 @@ app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/search', search)
 
 function auth (req, res, next) {
   console.log(req.user);

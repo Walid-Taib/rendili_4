@@ -3,10 +3,10 @@ const search=express.Router();
 const bodyParser=require('body-parser');
 search.use(bodyParser.json());
 const Company=require('../models/company');
-
+const cors=require('cors')
 
 search.route('/')
-.post((req,res,next)=>{
+.post(cors(),(req,res,next)=>{
   query={}
   if(req.body.city){
     query.city=req.body.city
@@ -14,11 +14,21 @@ search.route('/')
   if(req.body.typeOjob){
     query.typeOjob=req.body.typeOjob
   }
-  if(req.body.position){
-    query.position=req.body.position;
-    query = { ...query, position: { $regex: req.body.position, $options: "i" } };
+ 
 
+
+  if(req.body.key){
+    query.position=req.body.key;
+    query = { ...query, position: { $regex: req.body.key, $options: "i" } };
   }
+  if(req.body.key2){
+    query.name=req.body.key2;
+    query = { ...query, name: { $regex: req.body.key2, $options: "i" } };
+  }
+
+
+
+
 
 
   Company.aggregate([{$match:query}])
