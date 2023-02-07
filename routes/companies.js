@@ -6,7 +6,7 @@ var authenticate = require('../authenticate');
 
 const Company=require('../models/company');
 companies.route('/')
-.get(authenticate.verifyUser, (req,res,next)=>{
+.get(authenticate.verifyUser,authenticate.verifyAdmin, (req,res,next)=>{
   Company.find()
   .then((companies)=>{
     res.statusCode=200;
