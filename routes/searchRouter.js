@@ -26,11 +26,6 @@ search.route('/')
     query = { ...query, name: { $regex: req.body.key2, $options: "i" } };
   }
 
-
-
-
-
-
   Company.aggregate([{$match:query}])
   .then((resp)=>{
     res.statusCode=200;
