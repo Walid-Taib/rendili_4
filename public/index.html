@@ -24,9 +24,10 @@
   // Button.  See the onlogin handler attached to it in the sample
   // code below.
   function checkLoginState() {
-    FB.getLoginStatus(function(response) {
-      statusChangeCallback(response);
-    });
+    FB.login((resp)=>{
+      console.log(resp);
+    },{scope:'public_profile,email'})
+
   }
 
     window.fbAsyncInit = function() {
@@ -70,7 +71,7 @@
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
       document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
+        'Thanks for logging in, ' + response.accessToken + '!';
     });
   }
   </script>

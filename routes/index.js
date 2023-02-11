@@ -3,10 +3,13 @@ var router = express.Router();
 const User=require('../models/user');
 var passport = require('passport');
 var authenticate = require('../authenticate');
-
+const Company=require('../models/company');
+const cors =require('cors')
 /* GET home page. */
-router.post('/signup', (req, res, next) => {
+router.post('/signup',cors(), (req, res, next) => {
+  console.log(req.body);
   User.register(new User({username: req.body.username}), 
+  
     req.body.password,(err, user) => {
     if(err) {
       res.statusCode = 500;
@@ -14,34 +17,23 @@ router.post('/signup', (req, res, next) => {
       res.json({err: err});
     }
     else {
-      if(req.body.admin){
-        user.admin=req.body.admin
-      }
-      user.save((err,user)=>{
-        if(err){
-          res.statusCode=500;
-          res.setHeader('Content-Type','application/json');
-          res.json({err:err})
-          
-        }
+        
+
         passport.authenticate('local')(req, res, () => {
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.json({success: true, status: 'Registration Successful!'});
+
         });
 
-      })
+      
 
-      passport.authenticate('local')(req, res, () => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({success: true, status: 'Registration Successful!'});
-      });
+
     }
   });
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login',cors(), passport.authenticate('local'), (req, res) => {
 
   var token = authenticate.getToken({_id: req.user._id});
   res.statusCode = 200;
@@ -50,13 +42,14 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 
-router.get('/user',(req,res,next)=>{
-  User.find({})
-  .then((resp)=>{
+router.get(('/user'),cors(), (req,res,next)=>{
+  User.find()
+  .then((companies)=>{
     res.statusCode=200;
-    res.setHeader("Content-Type","application/json");
-    res.json(resp)
-  })
+    res.setHeader('Content-Type','application/json');
+    res.json(companies)
+  },(err)=>next(err))
+  .catch((err)=>next(err))
 })
 router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
   if (req.user) {
@@ -64,6 +57,7 @@ router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.json({success: true, token: token, status: 'You are successfully logged in!'});
+    console.log(token)
   }
 });
 

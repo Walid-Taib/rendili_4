@@ -56,7 +56,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', indexRouter);
+app.use('/', indexRouter,cors());
 app.use('/search', search)
 
 function auth (req, res, next) {

@@ -4,15 +4,15 @@ const bodyParser=require('body-parser');
 search.use(bodyParser.json());
 const Company=require('../models/company');
 const cors=require('cors')
-
+const authenticate=require('../authenticate')
 search.route('/')
 .post(cors(),(req,res,next)=>{
   query={}
   if(req.body.city){
     query.city=req.body.city
   }
-  if(req.body.typeOjob){
-    query.typeOjob=req.body.typeOjob
+  if(req.body.typeOfJob){
+    query.typeOfJob=req.body.typeOfJob
   }
  
 
