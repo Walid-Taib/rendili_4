@@ -12,18 +12,13 @@ search.route('/')
     query.city=req.body.city
   }
   if(req.body.typeOfJob){
-    query.typeOfJob=req.body.typeOfJob
-  }
+    const job=req.body.typeOfJob.split(',')
+    query.typeOfJob=job 
+    query = { ...query, typeOfJob: { $in: job } };  }
  
 
-
   if(req.body.key){
-    query.position=req.body.key;
-    query = { ...query, position: { $regex: req.body.key, $options: "i" } };
-  }
-  if(req.body.key2){
-    query.name=req.body.key2;
-    query = { ...query, name: { $regex: req.body.key2, $options: "i" } };
+    query={...query,$or:[{position:{$regex:req.body.key , $options :"i"}},{name:{$regex:req.body.key , $options :"i"} }]}
   }
 
   Company.aggregate([{$match:query}])

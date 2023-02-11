@@ -15,6 +15,7 @@ companies.route('/')
   },(err)=>next(err))
   .catch((err)=>next(err))
 })
+
 .post((req,res,next)=>{
   Company.create(req.body)
   .then((company)=>{
@@ -74,5 +75,19 @@ companies.route('/:companyId')
   },(err)=>next(err))
   .catch((err)=>next(err))
 })
+
+
+companies.route('/sort')
+.get(cors(), (req,res,next)=>{
+  Company.find().sort({ createdAt: -1 })
+  .then((companies)=>{
+    res.statusCode=200;
+    res.setHeader('Content-Type','application/json');
+    res.json(companies)
+  },(err)=>next(err))
+  .catch((err)=>next(err))
+})
+
+
 
 module.exports=companies;
