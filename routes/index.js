@@ -6,44 +6,36 @@ var authenticate = require('../authenticate');
 const Company=require('../models/company');
 const cors =require('cors')
 /* GET home page. */
-router.post('/signup',cors(), (req, res, next) => {
-  console.log(req.body);
-  User.register(new User({email: req.body.email}), 
-  
-    req.body.password,(err, user) => {
-    if(err) {
-      res.statusCode = 500;
+router.post("/signup", function(req, res) {
+  User.register({ username: req.body.username, email: req.body.email }, req.body.password, function(err, user) {
+    if (err) {
+      return res.render("signup", { error: err.message });
+    }
+
+    passport.authenticate("local")(req, res, function() {
+      res.redirect("/company");
+    });
+  });
+});
+router.post("/login", function(req, res) {
+  const user = User.findOne({
+    $or: [{ username: req.body.username }, { email: req.body.username }]
+  }, function(err, user) {
+    if (!user) {
+      return res.render("login", { error: "Invalid credentials" });
+    }
+
+    req.logIn(user, function(err) {
+      if (err) {
+        return next(err);
+      }
+      var token = authenticate.getToken({_id: req.user._id});
+      res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.json({err: err});
-      console.log('dones no work')
-
-    }
-    else {
-        
-
-        passport.authenticate('local')(req, res, () => {
-          var token = authenticate.getToken({_id: req.user._id});
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({success: true, token: token,user:req.user, status: 'You are successfully logged in!'});
-
-
-        })
-
-      
-
-
-    }
+      res.json({success: true, token: token,user:req.user, status: 'You are successfully logged in!'});    });
   });
 });
 
-router.post('/login',cors(), passport.authenticate('local'), (req, res) => {
-
-  var token = authenticate.getToken({_id: req.user._id});
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json({success: true, token: token,user:req.user, status: 'You are successfully logged in!'});
-});
 
 
 router.get(('/user'),cors(), (req,res,next)=>{

@@ -74,7 +74,16 @@ exports.facebookPassport = passport.use(new FacebookTokenStrategy({
 }
 ));
 
-passport.use(new LocalStrategy({
-    usernameField: 'email'},User.authenticate()));
+passport.use(new LocalStrategy(User.authenticate()));
+
+// Use passport to handle sessions
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+
+
+
+
+
+
+
