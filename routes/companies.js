@@ -79,7 +79,7 @@ companies.route('/:companyId')
 
 companies.route('/sort')
 .get(cors(), (req,res,next)=>{
-  Company.find().sort({ createdAt: -1 })
+  Company.find()
   .then((companies)=>{
     res.statusCode=200;
     res.setHeader('Content-Type','application/json');

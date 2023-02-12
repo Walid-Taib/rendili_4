@@ -6,18 +6,19 @@ var authenticate = require('../authenticate');
 const Company=require('../models/company');
 const cors =require('cors')
 /* GET home page. */
-router.post("/signup", function(req, res) {
+router.post("/signup",cors(), function(req, res) {
   User.register({ username: req.body.username, email: req.body.email }, req.body.password, function(err, user) {
     if (err) {
       return res.render("signup", { error: err.message });
     }
 
     passport.authenticate("local")(req, res, function() {
-      res.redirect("/company");
+      res.statusCode=200;
+      res.setHeader('Content-Type','application/json')
     });
   });
 });
-router.post("/login", function(req, res) {
+router.post("/login",cors(), function(req, res) {
   const user = User.findOne({
     $or: [{ username: req.body.username }, { email: req.body.username }]
   }, function(err, user) {

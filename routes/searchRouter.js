@@ -21,7 +21,7 @@ search.route('/')
     query={...query,$or:[{position:{$regex:req.body.key , $options :"i"}},{name:{$regex:req.body.key , $options :"i"} }]}
   }
 
-  Company.aggregate([{$match:query}])
+  Company.aggregate([{$match:query},{$sort:{createdAt:req.body.sort=='By Default' ? 1 :req.body.sort=='recent first'? -1 :1}}])
   .then((resp)=>{
     res.statusCode=200;
     res.setHeader("Content-Type","application/json");

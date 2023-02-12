@@ -11,7 +11,8 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var config = require('./config');
 var search=require('./routes/searchRouter')
-var cors=require('cors')
+var cors=require('cors');
+const sort=require('./routes/sort')
 /*************************connection to the database  */
 
 const mongoose = require('mongoose');
@@ -73,6 +74,7 @@ function auth (req, res, next) {
 }
 
 app.use('/company',companies)
+app.use('/sort',sort)
 
 app.use(express.static(path.join(__dirname, 'public')));
 
