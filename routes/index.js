@@ -15,6 +15,8 @@ router.post('/signup',cors(), (req, res, next) => {
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
       res.json({err: err});
+      console.log('dones no work')
+
     }
     else {
         
@@ -24,9 +26,9 @@ router.post('/signup',cors(), (req, res, next) => {
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.json({success: true, token: token,user:req.user, status: 'You are successfully logged in!'});
-          res.redirect('/company');
 
-        });
+
+        })
 
       
 
