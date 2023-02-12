@@ -5,7 +5,8 @@ var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var FacebookTokenStrategy = require('passport-facebook-token');
-var config=require('./config.js')
+
+var config = require('./config.js');
 
 exports.getToken = function(user) {
     return jwt.sign(user, config.secretKey,
@@ -45,15 +46,6 @@ exports.verifyAdmin=(req,res,next)=>{
     }
 }
 
-function verify(email, password, done) {
-    User.findOne({ email: email }, function(err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      if (!user.verifyPassword(password)) { return done(null, false); }
-      return done(null, user);
-    });
-  }
-
 
 exports.facebookPassport = passport.use(new FacebookTokenStrategy({
     clientID: config.facebook.clientId,
@@ -82,4 +74,6 @@ exports.facebookPassport = passport.use(new FacebookTokenStrategy({
 }
 ));
 
-passport.use(new LocalStrategy({usernameField:'email'},verify));
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
