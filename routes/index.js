@@ -51,10 +51,24 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.post('/save/:id', (req, res) => {
+  const id = req.params.id;
+  const companies = req.body.companies ;
+
+  User.updateOne({ _id: id }, { $push: { companies: companies } }, (error) => {
+    if (error) {
+      return res.status(400).send({ error: error.message });
+    } else {
+      return res.send({ message: 'Value added successfully' });
+    }
+  });
+});
+
 
 
 router.get(('/user'),cors(), (req,res,next)=>{
   User.find()
+  .populate('companies')
   .then((companies)=>{
     res.statusCode=200;
     res.setHeader('Content-Type','application/json');

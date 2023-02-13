@@ -15,7 +15,11 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  companies:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Company'
+  }]
 });
 
 userSchema.pre('save', async function (next) {
