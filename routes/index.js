@@ -4,39 +4,53 @@ const User=require('../models/user');
 var passport = require('passport');
 var authenticate = require('../authenticate');
 const Company=require('../models/company');
-const cors =require('cors')
+const cors =require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const secret = process.env.JWT_SECRET || 'mysecretkey1234567890';
+
 /* GET home page. */
-router.post("/signup",cors(), function(req, res) {
-  User.register({ username: req.body.username, email: req.body.email }, req.body.password, function(err, user) {
-    if (err) {
-      return res.render("signup", { error: err.message });
+router.post('/signup', async (req, res) => {
+  const { email, username, password } = req.body;
+  const user = new User({ email, username, password });
+
+  try {
+    await user.save();
+    res.status(201).json({ message: 'User created' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post('/login', async (req, res) => {
+  const { emailOrUsername, password } = req.body;
+  let user;
+
+  if (emailOrUsername.includes('@')) {
+    user = await User.findOne({ email: emailOrUsername });
+  } else {
+    user = await User.findOne({ username: emailOrUsername });
+  }
+
+  if (!user) {
+    return res.status(401).json({ message: 'User not found' });
+  }
+
+  try {
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Incorrect password' });
     }
 
-    passport.authenticate("local")(req, res, function() {
-      res.statusCode=200;
-      res.setHeader('Content-Type','application/json')
+    const token = jwt.sign({ id: user._id }, secret, {
+      expiresIn: '1d'
     });
-  });
+    res.status(200).json({ message: 'User logged in', token });
+     } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
-router.post("/login",cors(), function(req, res) {
-  const user = User.findOne({
-    $or: [{ username: req.body.username }, { email: req.body.username }]
-  }, function(err, user) {
-    if (!user) {
-      return res.render("login", { error: "Invalid credentials" });
-    }
-
-    req.logIn(user, function(err) {
-      if (err) {
-        return next(err);
-      }
-      var token = authenticate.getToken({_id: req.user._id});
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({success: true, token: token,user:req.user, status: 'You are successfully logged in!'});    });
-  });
-});
-
 
 
 router.get(('/user'),cors(), (req,res,next)=>{
