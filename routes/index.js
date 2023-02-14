@@ -48,7 +48,7 @@ router.post('/login',cors(), async (req, res) => {
     });
     User.aggregate([{$match:{$or:[{username:req.body.username},{email:req.body.email}]}}])
     .then((user)=>{
-      res.status(200).json({message : 'user logged in ' ,token , success:true,user})
+        res.status(200).json({message : 'user logged in ' ,token , success:true,user})
     })
      } catch (err) {
     res.status(500).json({ message: err.message });

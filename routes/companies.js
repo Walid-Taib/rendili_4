@@ -2,13 +2,18 @@ const express=require('express');
 const companies=express.Router();
 const bodyParser=require('body-parser');
 companies.use(bodyParser.json());
-var authenticate = require('../authenticate');
+const { verifyUserWithToken } = require('../authenticate');
 var cors=require('cors')
 const Company=require('../models/company');
 companies.route('/')
-.get(cors(), (req,res,next)=>{
+.get((req,res,next)=>{
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const user = verifyUserWithToken(token, 'my-secret-key');
+
   Company.find()
   .then((companies)=>{
+
     res.statusCode=200;
     res.setHeader('Content-Type','application/json');
     res.json(companies)

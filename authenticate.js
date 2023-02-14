@@ -33,7 +33,37 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
         });
     }));
 
-exports.verifyUser = passport.authenticate('jwt', {session: false});
+
+
+
+    exports.verifyUserWithToken=(token, secretKey) =>{
+        try {
+          // Extract the token from the "Bearer" header
+          const tokenParts = token.split(' ');
+          const tokenValue = tokenParts[1];
+      
+          // Verify the token using the secret key
+          const decodedToken = jwt.verify(tokenValue, secretKey);
+      
+          // Extract the user ID from the decoded token
+          const userId = decodedToken.user_id;
+      
+          // Check if the user with the given ID exists in the database
+          if (!userExistsInDatabase(userId)) {
+            throw new Error('User does not exist');
+          }
+      
+          // Return the verified user
+          return getUserById(userId);
+        } catch (error) {
+          // Handle any errors that occur during the verification process
+          console.error(`Error verifying user with token: ${error}`);
+          return null;
+        }
+      }
+      
+    
+
 exports.verifyAdmin=(req,res,next)=>{
     if(req.user.admin){
         next()
