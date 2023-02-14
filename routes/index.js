@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET || 'mysecretkey1234567890';
 
 /* GET home page. */
-router.post('/signup', async (req, res) => {
+router.post('/signup',cors(), async (req, res) => {
   const { email, username, password } = req.body;
   const user = new User({ email, username, password });
 
@@ -22,14 +22,14 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
-  const { emailOrUsername, password } = req.body;
+router.post('/login',cors(), async (req, res) => {
+  const { username, password } = req.body;
   let user;
 
-  if (emailOrUsername.includes('@')) {
-    user = await User.findOne({ email: emailOrUsername });
+  if (username.includes('@')) {
+    user = await User.findOne({ email: username });
   } else {
-    user = await User.findOne({ username: emailOrUsername });
+    user = await User.findOne({ username: username });
   }
 
   if (!user) {
@@ -46,7 +46,10 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id }, secret, {
       expiresIn: '1d'
     });
-    res.status(200).json({ message: 'User logged in', token });
+    User.aggregate([{$match:{$or:[{username:req.body.username},{email:req.body.email}]}}])
+    .then((user)=>{
+      res.status(200).json({message : 'user logged in ' ,token , success:true,user})
+    })
      } catch (err) {
     res.status(500).json({ message: err.message });
   }
