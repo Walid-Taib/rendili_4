@@ -1,98 +1,49 @@
 const express=require('express');
-const companies=express.Router();
+const router=express.Router();
 const bodyParser=require('body-parser');
-companies.use(bodyParser.json());
-const { verifyUserWithToken } = require('../authenticate');
+router.use(bodyParser.json());
+var authenticate = require('../auth');
+var passport = require('passport');
+
 var cors=require('cors')
 const Company=require('../models/company');
-companies.route('/')
-.get((req,res,next)=>{
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  const user = verifyUserWithToken(token, 'my-secret-key');
+router.post('/signup', (req, res, next) => {
+  Company.register(new Company({username: req.body.username}), 
+    req.body.password, (err, user) => {
+    if(err) {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({err: err});
+    }
+    else {
+      passport.authenticate('local')(req, res, () => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({success: true, status: 'Registration Successful!'});
+      });
+    }
+  });
+});
 
-  Company.find()
-  .then((companies)=>{
+router.post('/login',authenticate.modifyRequestBody, passport.authenticate('local'), (req, res) => {
 
-    res.statusCode=200;
-    res.setHeader('Content-Type','application/json');
-    res.json(companies)
-  },(err)=>next(err))
-  .catch((err)=>next(err))
-})
+  var token = authenticate.getToken({_id: req.user._id});
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.json({success: true, token: token, status: 'You are successfully logged in!'});
+});
 
-.post((req,res,next)=>{
-  Company.create(req.body)
-  .then((company)=>{
-    res.statusCode=200
-    res.setHeader('Content-Type','application/json');
-    res.json(company)
-  },(err)=>next(err))
-  .catch((err)=>next(err))
-})
-.put((req,res,next)=>{
-  res.statusCode=404;
-  res.send('Operation is not available');
-  console.log('Operation is not available');
-})
-.delete((req,res,next)=>{
-  Company.deleteMany()
-  .then((resp)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type','application/json');
-    res.json(resp)
-  },(err)=>next(err))
-  .catch((err)=>next(err))
-})
+router.get('/logout', (req, res) => {
+  if (req.session) {
+    req.session.destroy();
+    res.clearCookie('session-id');
+    res.redirect('/');
+  }
+  else {
+    var err = new Error('You are not logged in!');
+    err.status = 403;
+    next(err);
+  }
+});
 
-companies.route('/:companyId')
-.get((req,res,next)=>{
-  Company.findById(req.params.companyId)
-  .then((company)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type','application/json');
-    res.json(company)
-  },(err)=>next(err))
-  .catch((err)=>next(err));
-})
-.post((req,res,next)=>{
-  res.statusCode=404;
-  res.send('Operation is not available');
-  console.log('Operation is not available');  res.send('Ope')
-})
-.put((req,res,next)=>{
-  Company.findByIdAndUpdate(req.params.companyId,{
-    $set:req.body
-  },{new:true})
-  .then((company)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type','application/json');
-    res.json(company);
-  },(err)=>next(err))
-  .catch((err)=>next(err))
-})
-.delete((req,res,next)=>{
-  Company.findByIdAndRemove(req.params.companyId)
-  .then((resp)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type','applicaiton/json');
-    res.json(resp)
-  },(err)=>next(err))
-  .catch((err)=>next(err))
-})
-
-
-companies.route('/sort')
-.get(cors(), (req,res,next)=>{
-  Company.find()
-  .then((companies)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type','application/json');
-    res.json(companies)
-  },(err)=>next(err))
-  .catch((err)=>next(err))
-})
-
-
-
-module.exports=companies;
+module.exports=router;

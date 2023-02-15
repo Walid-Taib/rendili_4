@@ -31,7 +31,6 @@ connect.then((db) => {
 
 var indexRouter = require('./routes/index');
 const companies = require('./routes/companies');
-const uploadRouter = require('./routes/uploadRouter');
 
 var app = express();
 
@@ -75,8 +74,7 @@ function auth (req, res, next) {
 }
 
 app.use('/company',companies)
-app.use('/sort',sort);
-app.use('/uploads',uploadRouter)
+app.use('/sort',sort)
 
 app.use(express.static(path.join(__dirname, 'public')));
 
