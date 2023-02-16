@@ -30,7 +30,7 @@ connect.then((db) => {
 
 
 var indexRouter = require('./routes/index');
-const companies = require('./routes/companies');
+const company = require('./routes/company');
 
 var app = express();
 
@@ -60,20 +60,8 @@ app.use(passport.session());
 app.use('/', indexRouter,cors());
 app.use('/search', search)
 
-function auth (req, res, next) {
-  console.log(req.user);
 
-  if (!req.user) {
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    next(err);
-  }
-  else {
-        next();
-  }
-}
-
-app.use('/company',companies)
+app.use('/company',company)
 app.use('/sort',sort)
 
 app.use(express.static(path.join(__dirname, 'public')));

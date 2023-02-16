@@ -8,7 +8,7 @@ var passport = require('passport');
 var cors=require('cors')
 const Company=require('../models/company');
 router.post('/signup', (req, res, next) => {
-  Company.register(new Company({username: req.body.username}), 
+  Company.register(new Company({username: req.body.username,city:req.body.city,description:req.body.description,size:req.body.size,email:req.body.email}), 
     req.body.password, (err, user) => {
     if(err) {
       res.statusCode = 500;

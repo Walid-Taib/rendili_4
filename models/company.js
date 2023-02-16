@@ -2,24 +2,26 @@ const mongoose=require('mongoose');
 const Schema =mongoose.Schema;
 const localpassportmongoose=require('passport-local-mongoose')
 const CompanySchema =new Schema({
-    name:{
+    city:{
         type:String,
-        unique:true,
-    }
-    ,city:{
-        type:String,
-    },
-    position:{
-        type:String,
+        required:true
 
     },
     description:{
         type:String,
+        required:true
+
     },
+
     email:{
         type:String,
         required:true
+    },
+    size:{
+        type:String,
+        required:true
     }
+
     
 
 
