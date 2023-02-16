@@ -4,22 +4,18 @@ const localpassportmongoose=require('passport-local-mongoose')
 const CompanySchema =new Schema({
     city:{
         type:String,
-        required:true
 
     },
     description:{
         type:String,
-        required:true
 
     },
 
     email:{
         type:String,
-        required:true
     },
     size:{
         type:String,
-        required:true
     }
 
     
