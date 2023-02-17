@@ -43,4 +43,32 @@ router.post('/signup', (req, res, next) => {
 });
 
 
+
+
+
+router.post('/login' ,(req,res,next)=>{
+  let strategy, Model;
+  
+  // Determine which model and strategy to use based on the city
+  if (req.body.city) {
+    strategy = new LocalStrategy(Company.authenticate());
+    Model = Company;
+  } else {
+    strategy = new LocalStrategy(User.authenticate());
+    Model = User;
+  }
+  
+  passport.use(strategy);
+  passport.serializeUser(Model.serializeUser());
+  passport.deserializeUser(Model.deserializeUser());
+  passport.authenticate(strategy)(req, res, () => {
+    var token = authenticate.getToken({_id: req.user._id});
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json({success: true, token: token, status: 'You are successfully logged in!'});
+  });
+
+})
+
+
 module.exports=router;
