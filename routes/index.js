@@ -5,10 +5,22 @@ var passport = require('passport');
 var authenticate = require('../authenticate');
 const Company=require('../models/company');
 const cors =require('cors')
+const LocalStrategy=require('passport-local').Strategy
 /* GET home page. */
 router.post('/signup',cors(), (req, res, next) => {
-  console.log(req.body);
-  User.register(new User({username: req.body.username}), 
+  let Model , Strategy ;
+  if(req.body.company){
+    Strategy=new LocalStrategy(Company.authenticate())
+    Model=Company
+  }
+  else{
+    Strategy=new LocalStrategy(User.authenticate())
+    Model=User;
+  }
+passport.use(Strategy);
+passport.serializeUser(Model.serializeUser());
+passport.deserializeUser(Model.deserializeUser());
+  Model.register(new Model({username: req.body.username ,email:req.body.email}), 
   
     req.body.password,(err, user) => {
     if(err) {
@@ -19,12 +31,16 @@ router.post('/signup',cors(), (req, res, next) => {
     else {
         
 
-        passport.authenticate('local')(req, res, () => {
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({success: true, status: 'Registration Successful!'});
+      
+      passport.authenticate('local')(req, res, () => {
+        var token = authenticate.getToken({_id: req.user._id});
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({success: true, token: token, status: 'You are successfully logged in!'});
+    
+      });
 
-        });
+ 
 
       
 
@@ -33,12 +49,28 @@ router.post('/signup',cors(), (req, res, next) => {
   });
 });
 
-router.post('/login',cors(), passport.authenticate('local'), (req, res) => {
+router.post('/login',cors(),  (req, res) => {
+  let Model , Strategy ;
+  if(req.body.company){
+    Strategy=new LocalStrategy(Company.authenticate())
+    Model=Company
+  }
+  else{
+    Strategy=new LocalStrategy(User.authenticate())
+    Model=User;
+  }
+passport.use(Strategy);
+passport.serializeUser(Model.serializeUser());
+passport.deserializeUser(Model.deserializeUser());
 
-  var token = authenticate.getToken({_id: req.user._id});
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json({success: true, token: token, status: 'You are successfully logged in!'});
+  passport.authenticate('local')(req, res, () => {
+    var token = authenticate.getToken({_id: req.user._id});
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json({success: true, token: token, status: 'You are successfully logged in!'});
+
+  });
+
 });
 
 
