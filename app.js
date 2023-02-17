@@ -11,8 +11,7 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var config = require('./config');
 var search=require('./routes/searchRouter')
-var cors=require('cors');
-const sort=require('./routes/sort')
+var cors=require('cors')
 /*************************connection to the database  */
 
 const mongoose = require('mongoose');
@@ -30,7 +29,7 @@ connect.then((db) => {
 
 
 var indexRouter = require('./routes/index');
-const company = require('./routes/company');
+const companies = require('./routes/companies');
 
 var app = express();
 
@@ -60,9 +59,20 @@ app.use(passport.session());
 app.use('/', indexRouter,cors());
 app.use('/search', search)
 
+function auth (req, res, next) {
+  console.log(req.user);
 
-app.use('/company',company)
-app.use('/sort',sort)
+  if (!req.user) {
+    var err = new Error('You are not authenticated!');
+    err.status = 403;
+    next(err);
+  }
+  else {
+        next();
+  }
+}
+
+app.use('/company',companies)
 
 app.use(express.static(path.join(__dirname, 'public')));
 

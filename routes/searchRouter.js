@@ -12,16 +12,21 @@ search.route('/')
     query.city=req.body.city
   }
   if(req.body.typeOfJob){
-    const job=req.body.typeOfJob.split(',')
-    query.typeOfJob=job 
-    query = { ...query, typeOfJob: { $in: job } };  }
+    query.typeOfJob=req.body.typeOfJob
+  }
  
 
+
   if(req.body.key){
-    query={...query,$or:[{position:{$regex:req.body.key , $options :"i"}},{name:{$regex:req.body.key , $options :"i"} }]}
+    query.position=req.body.key;
+    query = { ...query, position: { $regex: req.body.key, $options: "i" } };
+  }
+  if(req.body.key2){
+    query.name=req.body.key2;
+    query = { ...query, name: { $regex: req.body.key2, $options: "i" } };
   }
 
-  Company.aggregate([{$match:query},{$sort:{createdAt:req.body.sort=='By Default' ? 1 :req.body.sort=='recent first'? -1 :1}}])
+  Company.aggregate([{$match:query}])
   .then((resp)=>{
     res.statusCode=200;
     res.setHeader("Content-Type","application/json");
