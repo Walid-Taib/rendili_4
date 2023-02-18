@@ -8,11 +8,11 @@ const cors=require('cors')
 search.route('/')
 .post(cors(),(req,res,next)=>{
   query={}
-  if (req.body.email) {
-    query['company.email'] = req.body.email;
+  if (req.body.name) {
+    query['company.username'] = req.body.name;
   }
   if(req.body.city){
-    query.city=req.body.city
+    query['company.city'] = req.body.city;
   }
   if(req.body.typeOfJob){
     query.typeOfJob=req.body.typeOfJob
@@ -26,9 +26,10 @@ search.route('/')
   }
   if(req.body.key2){
     query.name=req.body.key2;
-    query = { ...query, name: { $regex: req.body.key2, $options: "i" } };
-  }
-const company='company.email'
+    query['company.name'] = {
+      $regex: req.body.key2,
+      $options: 'i'
+    };  }
   Job.aggregate([
     {
       $lookup: {
