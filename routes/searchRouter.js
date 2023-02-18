@@ -26,7 +26,7 @@ search.route('/')
   }
   if(req.body.key2){
     query.name=req.body.key2;
-    query['company.name'] = {
+    query['company.username'] = {
       $regex: req.body.key2,
       $options: 'i'
     };  }
