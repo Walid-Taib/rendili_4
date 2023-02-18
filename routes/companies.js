@@ -5,7 +5,8 @@ const Jobrouter=express.Router();
 
 Jobrouter.route('/')
 .get(verifyUser, (req,res,next)=>{
-  Job.findOne({company:req.user._id})
+  Job.find()
+  .populate('company')
   .then((resp)=>{
     res.statusCode=200;
     res.setHeader('Content-Type','application/json');
@@ -18,6 +19,42 @@ Jobrouter.route('/')
   .then((resp)=>{
     res.statusCode=200;
     res.setHeader('Content-Type','application/json')
+    res.json(resp)
+  })
+})
+.put((req,res,next)=>{
+  res.statusCode=404;
+  res.send('Operation is not available')
+})
+.delete(verifyUser, (req,res,next)=>{
+  Job.findOne({company:req.user._id})
+  .then((resp)=>{
+    res.statusCode=200;
+    res.setHeader('Content-Type','application/json')
+    res.json(resp)
+  })
+})
+Jobrouter.route('/:job')
+.get(verifyUser ,(req,res,next)=>{
+  Job.findById(req.params.job)
+  .populate('company')
+  .then((job)=>{
+    if(job ){
+      res.statusCode=200;
+      res.setHeader('Content-Type','application/json');
+      res.json(job)
+    }
+    else{
+      res.statusCode=200;
+      res.send('the is no job ')
+    }
+  })
+})
+.put(verifyUser, (req,res,next)=>{
+  Job.findByIdAndUpdate(req.params.job,{$set:req.body},{new:true})
+  .then((resp)=>{
+    res.statusCode=200;
+    res.setHeader('Content-Type','application/json');
     res.json(resp)
   })
 })
