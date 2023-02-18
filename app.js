@@ -29,8 +29,7 @@ connect.then((db) => {
 
 
 var indexRouter = require('./routes/index');
-const companies = require('./routes/companies');
-const Jobrouter = require('./routes/companies');
+var jobs=require('./routes/companies')
 
 var app = express();
 
@@ -58,8 +57,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter,cors());
-app.use('/search', search)
-app.use('/jobs',Jobrouter)
+app.use('/Jobs',jobs)
 
 function auth (req, res, next) {
   console.log(req.user);
@@ -74,7 +72,6 @@ function auth (req, res, next) {
   }
 }
 
-app.use('/company',companies)
 
 app.use(express.static(path.join(__dirname, 'public')));
 

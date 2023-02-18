@@ -3,24 +3,13 @@ var router = express.Router();
 const User=require('../models/user');
 var passport = require('passport');
 var authenticate = require('../authenticate');
-const Company=require('../models/company');
 const cors =require('cors')
 const LocalStrategy=require('passport-local').Strategy
 /* GET home page. */
 router.post('/signup',cors(), (req, res, next) => {
-  let Model , Strategy ;
-  if(req.body.company){
-    Strategy=new LocalStrategy(Company.authenticate())
-    Model=Company
-  }
-  else{
-    Strategy=new LocalStrategy(User.authenticate())
-    Model=User;
-  }
-passport.use(Strategy);
-passport.serializeUser(Model.serializeUser());
-passport.deserializeUser(Model.deserializeUser());
-  Model.register(new Model({username: req.body.username ,email:req.body.email}), 
+
+
+  User.register(new User({username: req.body.username ,email:req.body.email}), 
   
     req.body.password,(err, user) => {
     if(err) {
@@ -50,18 +39,8 @@ passport.deserializeUser(Model.deserializeUser());
 });
 
 router.post('/login',cors(),  (req, res) => {
-  let Model , Strategy ;
-  if(req.body.company){
-    Strategy=new LocalStrategy(Company.authenticate())
-    Model=Company
-  }
-  else{
-    Strategy=new LocalStrategy(User.authenticate())
-    Model=User;
-  }
-passport.use(Strategy);
-passport.serializeUser(Model.serializeUser());
-passport.deserializeUser(Model.deserializeUser());
+
+
 
   passport.authenticate('local')(req, res, () => {
     var token = authenticate.getToken({_id: req.user._id});
