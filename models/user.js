@@ -7,6 +7,27 @@ var UserSchema = new Schema({
         type: String,
         required:true
     },
+    city:{
+        type:String
+    },
+    skills:{
+        type:String
+    },
+    description:{
+        type:String
+    },
+    experience:{
+        type:String
+    },
+    jobs:[{
+        type:Schema.Types.ObjectId,
+        ref:'Job'
+    }],
+    savedJob:[{
+        type:Schema.Types.ObjectId,
+        ref:'Job'
+    }],
+
     facebookId: String,
 
 });
