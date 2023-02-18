@@ -58,5 +58,18 @@ Jobrouter.route('/:job')
     res.json(resp)
   })
 })
+.post((req,res,next)=>{
+  res.statusCode=404;
+  res.send('Operation is not available')
+
+})
+.delete(verifyUser, (req,res,next)=>{
+  Job.findByIdAndRemove(req.params.job)
+  .then((resp)=>{
+    res.statusCode=200;
+    res.setHeader('Content-Type','application/json');
+    res.json(resp)
+  })
+})
 
 module.exports=Jobrouter;
