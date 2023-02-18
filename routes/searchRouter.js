@@ -3,10 +3,14 @@ const search=express.Router();
 const bodyParser=require('body-parser');
 search.use(bodyParser.json());
 const Job=require('../models/job');
+const User=require('../models/user')
 const cors=require('cors')
 search.route('/')
 .post(cors(),(req,res,next)=>{
   query={}
+  if (req.body.email) {
+    query['company.email'] = req.body.email;
+  }
   if(req.body.city){
     query.city=req.body.city
   }
@@ -24,17 +28,33 @@ search.route('/')
     query.name=req.body.key2;
     query = { ...query, name: { $regex: req.body.key2, $options: "i" } };
   }
-
-  Company.aggregate([{$match:query}])
-  .then((resp)=>{
-    res.statusCode=200;
-    res.setHeader("Content-Type","application/json");
-    res.json(resp);
-  })
+const company='company.email'
+  Job.aggregate([
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'company',
+        foreignField: '_id',
+        as: 'company'
+      }
+    },
+    {
+      $unwind: '$company'
+    },
+    {
+      $match:query
+    }
+  ], (err, result) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
 })
-search.route('/keyword')
-.post((req,res,next)=>{
-  Company.find()
+.then((resp)=>{
+  res.statusCode=200;
+  res.setHeader('Content-Type','application/json');
+  res.json(resp)
+})
 })
 
 module.exports=search;

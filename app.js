@@ -58,6 +58,7 @@ app.use(passport.session());
 
 app.use('/', indexRouter,cors());
 app.use('/Jobs',jobs)
+app.use('/search',search)
 
 function auth (req, res, next) {
   console.log(req.user);
