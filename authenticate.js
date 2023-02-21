@@ -47,6 +47,20 @@ exports.verifyAdmin=(req,res,next)=>{
 }
 
 
+exports.verifyCompany=(req,res,next)=>{
+    console.log(req.user.companyCondition);
+    if(req.user.companyCondition){
+        next()
+    }
+    else{
+        err=new Error('You are not allowed');
+        err.statusCode=404;
+        next(err);
+        return
+    }
+}
+
+
 exports.facebookPassport = passport.use(new FacebookTokenStrategy({
     clientID: config.facebook.clientId,
     clientSecret: config.facebook.clientSecret

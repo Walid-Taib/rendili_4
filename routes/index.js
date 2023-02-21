@@ -9,7 +9,7 @@ const LocalStrategy=require('passport-local').Strategy
 router.post('/signup',cors(), (req, res, next) => {
 
 
-  User.register(new User({username: req.body.username ,email:req.body.email}), 
+  User.register(new User({username: req.body.username ,email:req.body.email, companyCondition:req.body.companyCondition}), 
   
     req.body.password,(err, user) => {
     if(err) {
@@ -25,7 +25,7 @@ router.post('/signup',cors(), (req, res, next) => {
         var token = authenticate.getToken({_id: req.user._id});
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json({success: true, token: token, status: 'You are successfully logged in!'});
+        res.json({success: true, token: token, user:req.user, status: 'You are successfully logged in!'});
     
       });
 
@@ -46,7 +46,7 @@ router.post('/login',cors(),  (req, res) => {
     var token = authenticate.getToken({_id: req.user._id});
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.json({success: true, token: token, status: 'You are successfully logged in!'});
+    res.json({success: true, token: token, user:req.user, status: 'You are successfully logged in!'});
 
   });
 

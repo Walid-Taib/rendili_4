@@ -18,6 +18,10 @@ var UserSchema = new Schema({
     experience:{
         type:String
     },
+    companyCondition:{
+        type:Boolean,
+        default:false
+    },
     jobs:[{
         type:Schema.Types.ObjectId,
         ref:'Job'
