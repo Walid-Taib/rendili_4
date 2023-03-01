@@ -47,7 +47,19 @@ JobRouter.route('/')
         // Handle any errors
         next(err);
       });
-  });
+  })
+  .delete((req,res,next)=>{
+    Job.findByIdAndRemove(req.body.job)
+    .then((job)=>{
+        return User.findByIdAndUpdate(req.user._id, { $pull: { jobs: req.body.job} }, { new: true });
+    })
+    .then((response)=>{
+        res.statusCode=200;
+        res.setHeader('Content-Type','application/json');
+        res.json(response)
+
+    })
+  })
   
 
 
