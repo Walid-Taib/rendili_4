@@ -2,9 +2,10 @@ const express=require('express');
 const { verifyUser, verifyCompany } = require('../authenticate');
 const Job = require('../models/job');
 const User = require('../models/user');
-const axios=require('axios')
+const axios=require('axios');
 const Jobs=express.Router()
 const JobRouter=express.Router();
+const CompanyRouter=express.Router()
 JobRouter.route('/')
 .get((req,res,next)=>{
     Job.aggregate([  {
@@ -29,6 +30,28 @@ JobRouter.route('/')
     })
 }
 )
+.post( (req, res, next) => {
+    // Set the company field of the new job to the ID of the current user
+    req.body.company = req.user._id;
+  
+    // Create the new job
+    Job.create(req.body)
+      .then(job => {
+        return User.findByIdAndUpdate(req.user._id, { $push: { jobs: job._id } }, { new: true });
+      })
+      .then(user => {
+ 
+        res.json(user);
+      })
+      .catch(err => {
+        // Handle any errors
+        next(err);
+      });
+  });
+  
+
+
+
 
 
 
