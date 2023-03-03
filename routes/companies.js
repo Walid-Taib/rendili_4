@@ -8,7 +8,7 @@ CompanyRouter.route('/')
 
 
 // send all the information about the company including the jobs offers
-.get(cors() , (req,res,next)=>{
+.get(cors() ,verifyUser,verifyCompany, (req,res,next)=>{
   User.findById(req.user._id)
   .populate('jobs')
   .then((resp)=>{

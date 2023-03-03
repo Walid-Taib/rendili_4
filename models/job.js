@@ -16,14 +16,20 @@ const Jobschema=new Schema({
     skills:{
         type:String
     },
-    salary:{
+    salaryMin:{
+        type:String
+    },
+    salaryMax:{
+        type:String
+    },
+    city:{
         type:String
     },
     company:{
         type:Schema.Types.ObjectId,
         ref:'User'
     }
-})
+},{timestamps:true})
 
 const Job =mongoose.model('Job', Jobschema);
 module.exports=Job;

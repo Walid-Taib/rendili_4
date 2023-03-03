@@ -6,6 +6,54 @@ var authenticate = require('../authenticate');
 const cors =require('cors')
 const LocalStrategy=require('passport-local').Strategy
 /* GET home page. */
+
+
+
+
+const multer = require('multer');
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
+router.post('/picture',cors(),authenticate.verifyUser, upload.single('picture'), async (req, res) => {
+  try {
+    const { userId } = req.user._id;
+    const user = await User.findById(userId);
+    user.picture = req.file.path;
+    await user.save();
+    res.status(200).json({ message: 'Picture uploaded successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 router.post('/signup',cors(), (req, res, next) => {
 
 
