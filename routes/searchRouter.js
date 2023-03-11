@@ -12,7 +12,7 @@ search.route('/')
     query['company.username'] = req.body.name;
   }
   if(req.body.city){
-    query['company.city'] = req.body.city;
+    query.city = req.body.city;
   }
   if(req.body.typeOfJob){
     query.typeOfJob=req.body.typeOfJob

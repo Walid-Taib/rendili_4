@@ -11,7 +11,8 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var config = require('./config');
 var search=require('./routes/searchRouter')
-var cors=require('cors')
+var cors=require('cors');
+
 /*************************connection to the database  */
 
 const mongoose = require('mongoose');

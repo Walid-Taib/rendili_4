@@ -22,8 +22,11 @@ const Jobschema=new Schema({
     company:{
         type:Schema.Types.ObjectId,
         ref:'User'
+    },
+    city:{
+        type:String
     }
-})
+} ,{timestamps:true})
 
 const Job =mongoose.model('Job', Jobschema);
 module.exports=Job;
