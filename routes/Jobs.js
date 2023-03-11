@@ -7,8 +7,14 @@ const Jobs=express.Router()
 const JobRouter=express.Router();
 const CompanyRouter=express.Router()
 const cors=require('cors')
+<<<<<<< HEAD
 JobRouter.route('/')
 .get(cors(), verifyUser,verifyCompany,(req,res,next)=>{
+=======
+
+JobRouter.route('/')
+.get(cors(),verifyUser,verifyCompany, (req,res,next)=>{
+>>>>>>> dcb42e554c9070502527a977782dfae6669adeef
     Job.aggregate([  {
         $lookup: {
           from: "users",
@@ -31,7 +37,11 @@ JobRouter.route('/')
     })
 }
 )
+<<<<<<< HEAD
 .post(cors(), verifyUser, (req, res, next) => {
+=======
+.post(verifyUser,verifyCompany, (req, res, next) => {
+>>>>>>> dcb42e554c9070502527a977782dfae6669adeef
     // Set the company field of the new job to the ID of the current user
     req.body.company = req.user._id;
   

@@ -8,11 +8,13 @@ const cors=require('cors')
 search.route('/')
 .post(cors(),(req,res,next)=>{
   query={}
-  if (req.body.name) {
-    query['company.username'] = req.body.name;
-  }
+
   if(req.body.city){
+<<<<<<< HEAD
     query.city = req.body.city;
+=======
+    query['city'] = req.body.city;
+>>>>>>> dcb42e554c9070502527a977782dfae6669adeef
   }
   if(req.body.typeOfJob){
     query.typeOfJob=req.body.typeOfJob
@@ -26,7 +28,7 @@ search.route('/')
   }
   if(req.body.key2){
     query.name=req.body.key2;
-    query['company.username'] = {
+    query['user.username'] = {
       $regex: req.body.key2,
       $options: 'i'
     };  }
